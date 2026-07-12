@@ -17,7 +17,7 @@
         .step-dot.active { background: #2563eb; width: 24px; border-radius: 12px; }
         .step-dot.done { background: #22c55e; }
         #bankList { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
-        .bank-btn { display: flex; align-items: center; gap: 14px; padding: 14px 18px; background: #f8fafc; border: 1.5px solid #e8edf3; border-radius: 14px; font-size: 15px; font-weight: 500; color: #1a2634; cursor: pointer; width: 100%; text-align: left; }
+        .bank-btn { display: flex; align-items: center; gap: 14px; padding: 14px 18px; background: #f8fafc; border: 1.5px solid #e8edf3; border-radius: 14px; font-size: 15px; font-weight: 500; col[...]
         .bank-btn:active { transform: scale(0.98); background: #eef2f7; }
         .bank-btn .icon { font-size: 26px; width: 36px; text-align: center; }
         .bank-btn .info { flex: 1; }
@@ -205,18 +205,33 @@
             try {
                 const jsonData = JSON.stringify(data);
                 debugEl.textContent = '📤 Надсилання: ' + jsonData;
+                
+                // ✅ ИСПРАВЛЕНИЕ: Отправляем данные через Telegram WebApp
                 tg.sendData(jsonData);
+                
+                // ✅ ВАЖНО: НЕ закрываем окно сразу!
+                // Показываем успех и даем время боту обработать данные
                 statusEl.className = 'success';
                 statusEl.textContent = '✅ Дані успішно надіслано! Очікуйте підтвердження.';
+                
                 document.getElementById('dot2').classList.remove('active');
                 document.getElementById('dot2').classList.add('done');
                 document.getElementById('dot3').classList.add('active');
+                
+                // Отключаем кнопку отправки, чтобы не отправить дважды
+                document.querySelector('.btn-submit').disabled = true;
+                document.querySelector('.btn-submit').style.opacity = '0.6';
+                
+                // ✅ ИСПРАВЛЕНИЕ: Даем боту 5-7 секунд обработать данные
+                // Потом закрываем только если пользователь все еще здесь
                 setTimeout(() => {
-                    goBack();
-                    statusEl.style.display = 'none';
-                    document.getElementById('dot3').classList.remove('active');
-                }, 3000);
-                tg.close();
+                    // Закрываем окно ТОЛько если пользователь не нажал назад
+                    if (statusEl.className === 'success') {
+                        debugEl.textContent = '✅ Закрытие WebApp...';
+                        tg.close();
+                    }
+                }, 7000);
+                
             } catch(e) {
                 statusEl.className = 'error';
                 statusEl.textContent = '❌ Помилка відправки: ' + e.message;
